@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>拼淘狗商城 - 登录/注册</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f7f8fa;
+            font-family: "Microsoft Yahei";
+        }
+
+        .container {
+            width: 420px;
+            padding: 40px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        /* 商城Logo + 标题区域 */
+        .logo-box {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            width: 70px;
+            height: 70px;
+            margin-bottom: 10px;
+        }
+
+        .shop-title {
+            font-size: 28px;    /* 商城名字超大 */
+            font-weight: bold;
+            color: #1677ff;
+        }
+
+        .tab-box {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .tab {
+            width: 50%;
+            height: 44px;
+            line-height: 44px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 17px;
+        }
+
+        .tab.active {
+            color: #1677ff;
+            border-bottom: 2px solid #1677ff;
+            font-weight: bold;
+        }
+
+        .form-box {
+            display: none;
+        }
+
+        .form-box.active {
+            display: block;
+        }
+
+        .input-item {
+            margin-bottom: 20px;
+        }
+
+        .input-item input {
+            width: 100%;
+            height: 44px;
+            padding: 0 15px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        .input-item input:focus {
+            outline: none;
+            border-color: #1677ff;
+        }
+
+        .btn {
+            width: 100%;
+            height: 46px;
+            background: #1677ff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .btn:hover {
+            background: #2f80ff;
+        }
+
+        #loginTip, #registerTip {
+            text-align: center;
+            margin-top: 18px;
+            font-size: 14px;
+        }
+
+        .success {
+            color: #00b42a;
+        }
+
+        .error {
+            color: #ff4d4f;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <!-- Logo + 商城大标题 -->
+    <div class="logo-box">
+        <img src="/img/logo.png" alt="logo" class="logo">
+        <div class="shop-title">拼淘狗商城</div>
+    </div>
+
+    <div class="tab-box">
+        <div class="tab active" onclick="switchTab('login')">登录</div>
+        <div class="tab" onclick="switchTab('register')">注册</div>
+    </div>
+
+    <!-- 登录 -->
+    <div class="form-box active" id="loginForm">
+        <div class="input-item">
+            <input type="text" id="loginUsername" placeholder="请输入用户名">
+        </div>
+        <div class="input-item">
+            <input type="password" id="loginPassword" placeholder="请输入密码">
+        </div>
+        <button class="btn" onclick="doLogin()">登录</button>
+        <div id="loginTip"></div>
+    </div>
+
+    <!-- 注册 -->
+    <div class="form-box" id="registerForm">
+        <div class="input-item">
+            <input type="text" id="regUsername" placeholder="请输入用户名">
+        </div>
+        <div class="input-item">
+            <input type="password" id="regPassword" placeholder="请输入密码">
+        </div>
+        <div class="input-item">
+            <input type="password" id="regConfirmPwd" placeholder="确认密码">
+        </div>
+        <button class="btn" onclick="doRegister()">注册</button>
+        <div id="registerTip"></div>
+    </div>
+</div>
+
+<script>
+    function switchTab(type) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelector(`.tab[onclick="switchTab('${type}')"]`).classList.add('active');
+        document.querySelectorAll('.form-box').forEach(f => f.classList.remove('active'));
+        document.getElementById(type+'Form').classList.add('active');
+        document.getElementById(type+'Tip').innerText = '';
+    }
+
+    async function doLogin() {
+        let username = document.getElementById('loginUsername').value;
+        let password = document.getElementById('loginPassword').value;
+        let tip = document.getElementById('loginTip');
+
+        if (!username || !password) {
+            tip.innerText = '请输入用户名和密码';
+            tip.className = 'error';
+            return;
+        }
+
+        let res = await fetch(`/user/login?username=${username}&password=${password}`);
+        let result = await res.json();
+
+        if (result.code === 200) {
+            tip.innerText = '登录成功！欢迎你 ' + result.data.username;
+            tip.className = 'success';
+        } else {
+            tip.innerText = result.msg;
+            tip.className = 'error';
+        }
+    }
+
+    async function doRegister() {
+        let username = document.getElementById('regUsername').value;
+        let password = document.getElementById('regPassword').value;
+        let pwd2 = document.getElementById('regConfirmPwd').value;
+        let tip = document.getElementById('registerTip');
+
+        if (!username || !password) {
+            tip.innerText = '请完善信息';
+            tip.className = 'error';
+            return;
+        }
+        if (password !== pwd2) {
+            tip.innerText = '两次密码不一致';
+            tip.className = 'error';
+            return;
+        }
+
+        let res = await fetch(`/user/register?username=${username}&password=${password}`);
+        let result = await res.json();
+
+        if (result.code === 200) {
+            tip.innerText = '注册成功！即将跳转到登录';
+            tip.className = 'success';
+            setTimeout(() => switchTab('login'), 1500);
+        } else {
+            tip.innerText = result.msg;
+            tip.className = 'error';
+        }
+    }
+</script>
+</body>
+</html>
