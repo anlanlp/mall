@@ -1,14 +1,10 @@
-# 📖 拼淘狗商城（校园电商 Demo）
-## 🔥 基于 Spring Boot + MyBatis + MySQL 开发的简易电商平台
+#  拼淘狗商城
+##  基于 Spring Boot + MyBatis + MySQL 开发的简易电商平台
 
 ---
 
-# ✨ 项目介绍
-**拼淘狗商城** 是模仿拼多多/淘宝风格的小型校园电商系统，前后端分离架构，完整实现电商核心业务流程，适合课程设计、期末大作业参考。
-
----
-
-# 📌 已实现功能
+# 项目介绍
+#  已实现功能
 ### 🟢 用户模块
 - ✅ 用户注册 / 登录（MD5 加密）
 - ✅ 登录状态保持
@@ -22,7 +18,7 @@
 - ✅ 加入购物车
 - ✅ 购物车列表
 - ✅ 删除购物车商品
-- ✅ **阶梯满减优惠**：满99减9、满129减20
+- ✅ **阶梯满减优惠**
 - ✅ 优惠原因&金额清晰展示
 
 ### 🟢 订单模块
@@ -34,15 +30,15 @@
 
 # 🔧 技术栈
 ### 后端
-- ☕ Spring Boot 2.x
-- 🗄️ MyBatis
-- 🐬 MySQL 8.0
+-  Spring Boot 2.x
+-  MyBatis
+-  MySQL 8.0
 
 ### 前端
-- 🌐 HTML + CSS + JavaScript
-- 🎨 原生CSS布局，开箱即用
+-  HTML + CSS + JavaScript
+-  原生CSS布局，开箱即用
 
 ### 工具
-- 💻 IntelliJ IDEA
-- 📦 Maven
-- 🐙 Git + GitHub
+-  IntelliJ IDEA
+-  Maven
+-  Git + GitHub
