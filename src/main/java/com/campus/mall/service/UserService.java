@@ -1,13 +1,11 @@
-package com.campus.mall.service.impl;
+package com.campus.mall.service;
 
 import com.campus.mall.entity.User;
 
 public interface UserService {
-    /**
-     * 用户登录方法
-     * @param username 用户名
-     * @param password 密码
-     * @return 登录成功返回用户对象，失败返回null
-     */
+    // 登录
     User login(String username, String password);
+
+    // 注册（核心新增）
+    String register(String username, String password);
 }

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>拼淘狗商城</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'PingFang SC', sans-serif; }
+        .nav { background: #2c3e50; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .nav a { color: white; text-decoration: none; margin-left: 30px; font-size: 16px; }
+        .nav a:hover { color: #3498db; }
+        .container { padding: 30px; max-width: 1200px; margin: 0 auto; }
+        .goods-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; margin-top: 20px; }
+        .goods-card { border: 1px solid #eee; border-radius: 10px; padding: 20px; text-align: center; transition: 0.3s; cursor: pointer; }
+        .goods-card:hover { box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .goods-card img { width: 150px; height: 150px; object-fit: cover; margin-bottom: 15px; }
+        .goods-card h3 { font-size: 18px; color: #333; margin-bottom: 10px; }
+        .goods-card .price { font-size: 22px; color: #e74c3c; font-weight: bold; margin-bottom: 15px; }
+        .goods-card button { background: #3498db; color: white; border: none; padding: 10px 25px; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        .goods-card button:hover { background: #2980b9; }
+
+        /* 右下角悬浮购物车 */
+        .float-cart {
+            position: fixed; right: 30px; bottom: 30px;
+            width: 100px; height: 100px;
+            background: #ff3333; color: white;
+            border-radius: 50%; display: flex;
+            align-items: center; justify-content: center;
+            font-size: 20px; font-weight: bold;
+            cursor: pointer; box-shadow: 0 8px 20px rgba(255,51,51,0.5);
+            z-index: 9999; border: 4px solid #fff;
+        }
+        .float-cart:hover { transform: scale(1.1); background: #e60000; }
+    </style>
+</head>
+<body>
+<div class="nav">
+    <h2>拼淘狗商城</h2>
+    <div>
+        <a href="index.html">商城首页</a>
+        <a href="user_info.html">个人中心</a>
+    </div>
+</div>
+
+<div class="container">
+    <h2>热门商品</h2>
+    <div class="goods-grid" id="goodsGrid"></div>
+</div>
+
+<div class="float-cart" onclick="window.location.href='cart.html'">购物车</div>
+
+<script>
+    const userId = 10001;
+    window.onload = fetchGoodsList;
+
+    // 获取商品列表
+    function fetchGoodsList() {
+        fetch('/goods/list')
+            .then(res => res.json())
+            .then(result => result.code === 200 && renderGoods(result.data));
+    }
+
+    // 渲染商品 + 点击跳详情页
+    function renderGoods(goodsList) {
+        const grid = document.getElementById('goodsGrid');
+        grid.innerHTML = goodsList.map(goods => `
+                <div class="goods-card" onclick="goDetail(${goods.id})">
+                    <img src="${goods.img}" alt="${goods.name}">
+                    <h3>${goods.name}</h3>
+                    <p style="color: #666; font-size: 14px; margin-bottom: 10px;">${goods.desc}</p>
+                    <div class="price">¥${goods.price}</div>
+                    <p style="color: #999; font-size: 12px; margin-bottom: 15px;">库存：${goods.stock}件</p>
+                    <button onclick="event.stopPropagation();addToCart(${goods.id})">加入购物车</button>
+                </div>
+            `).join('');
+    }
+
+    // 跳转到商品详情页
+    function goDetail(id) {
+        window.location.href = `goods_detail.html?goodsId=${id}`;
+    }
+
+    // 只替换这个函数，其他不动
+    function addToCart(goodsId) {
+        fetch(`/cart/add?userId=${userId}&goodsId=${goodsId}`, { method: 'POST' })
+            .then(res => res.text())
+            .then(result => {
+                alert(result); // 弹出"加入购物车成功！"，确认接口通了
+            })
+            .catch(err => {
+                alert("加入购物车失败！请检查后端是否启动");
+                console.error(err);
+            });
+    }
+</script>
+</body>
+</html>

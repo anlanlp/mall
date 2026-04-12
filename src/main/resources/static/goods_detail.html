@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>商品详情</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'PingFang SC', sans-serif; }
+        .nav { background: #2c3e50; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .nav a { color: white; text-decoration: none; margin-left: 30px; font-size: 16px; }
+        .nav a:hover { color: #3498db; }
+
+        .detail-container { max-width: 1200px; margin: 50px auto; display: flex; gap: 50px; padding: 0 20px; }
+        .left-img { flex: 1; }
+        .left-img img { width: 100%; border-radius: 10px; border: 1px solid #eee; }
+        .right-info { flex: 1; }
+        .right-info h1 { font-size: 28px; color: #333; margin-bottom: 20px; }
+        .price-box { background: #fdf3f3; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
+        .price-box .price { font-size: 36px; color: #ff3333; font-weight: bold; }
+        .stock { font-size: 16px; color: #666; margin: 15px 0; }
+        .desc-box { padding: 20px; background: #f8f9fa; border-radius: 8px; margin-bottom: 40px; }
+        .desc-box h3 { margin-bottom: 10px; color: #333; }
+        .desc-box p { color: #666; line-height: 1.8; font-size: 16px; }
+        .btn-group { display: flex; gap: 20px; }
+        .buy-btn { padding: 15px 40px; font-size: 18px; border: none; border-radius: 8px; cursor: pointer; }
+        .add-cart { background: #ff9900; color: white; }
+        .back-home { background: #3498db; color: white; }
+
+        /* 悬浮购物车 */
+        .float-cart {
+            position: fixed; right: 30px; bottom: 30px;
+            width: 100px; height: 100px;
+            background: #ff3333; color: white;
+            border-radius: 50%; display: flex;
+            align-items: center; justify-content: center;
+            font-size: 20px; font-weight: bold;
+            cursor: pointer; box-shadow: 0 8px 20px rgba(255,51,51,0.5);
+            z-index: 9999; border: 4px solid #fff;
+        }
+        .float-cart:hover { transform: scale(1.1); background: #e60000; }
+    </style>
+</head>
+<body>
+<div class="nav">
+    <h2>拼淘狗商城</h2>
+    <div>
+        <a href="index.html">商城首页</a>
+        <a href="user_info.html">个人中心</a>
+    </div>
+</div>
+
+<div class="detail-container">
+    <!-- 左侧商品图片 -->
+    <div class="left-img">
+        <img id="goodsImg" src="" alt="商品图片">
+    </div>
+    <!-- 右侧商品信息 -->
+    <div class="right-info">
+        <h1 id="goodsName"></h1>
+        <div class="price-box">
+            售价：<span class="price" id="goodsPrice"></span>
+        </div>
+        <div class="stock">库存：<span id="goodsStock"></span> 件</div>
+        <div class="desc-box">
+            <h3>商品介绍</h3>
+            <p id="goodsDesc"></p>
+        </div>
+        <div class="btn-group">
+            <button class="buy-btn add-cart" id="addCart">加入购物车</button>
+            <button class="buy-btn back-home" onclick="window.location.href='index.html'">返回首页</button>
+        </div>
+    </div>
+</div>
+
+<div class="float-cart" onclick="window.location.href='cart.html'">购物车</div>
+
+<script>
+    const userId = 10001;
+    // 获取URL中的商品ID
+    const goodsId = new URLSearchParams(window.location.search).get('goodsId');
+
+    window.onload = function () {
+        fetchGoodsDetail();
+        // 绑定加入购物车事件
+        document.getElementById('addCart').onclick = addToCart;
+    };
+
+    // 获取商品详情
+    function fetchGoodsDetail() {
+        fetch('/goods/list')
+            .then(res => res.json())
+            .then(result => {
+                const list = result.data;
+                const goods = list.find(item => item.id == goodsId);
+                renderDetail(goods);
+            });
+    }
+
+    // 渲染详情页
+    function renderDetail(goods) {
+        document.getElementById('goodsImg').src = goods.img;
+        document.getElementById('goodsName').innerText = goods.name;
+        document.getElementById('goodsPrice').innerText = '¥' + goods.price;
+        document.getElementById('goodsStock').innerText = goods.stock;
+        document.getElementById('goodsDesc').innerText = goods.desc;
+    }
+
+    // 加入购物车
+    function addToCart() {
+        fetch(`/cart/add?userId=${userId}&goodsId=${goodsId}`, { method: 'POST' })
+            .then(res => res.json())
+            .then(result => alert(result.msg));
+    }
+</script>
+</body>
+</html>

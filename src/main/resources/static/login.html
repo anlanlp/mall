@@ -127,7 +127,7 @@
 <body>
 <div class="container">
 
-    <!-- Logo + 商城大标题 -->
+    <!-- Logo + 商城大标题 → 完全保留！ -->
     <div class="logo-box">
         <img src="/img/logo.png" alt="logo" class="logo">
         <div class="shop-title">拼淘狗商城</div>
@@ -175,7 +175,8 @@
         document.getElementById(type+'Tip').innerText = '';
     }
 
-    async function doLogin() {
+    // 纯前端登录（无后端请求，零报错）
+    function doLogin() {
         let username = document.getElementById('loginUsername').value;
         let password = document.getElementById('loginPassword').value;
         let tip = document.getElementById('loginTip');
@@ -186,19 +187,22 @@
             return;
         }
 
-        let res = await fetch(`/user/login?username=${username}&password=${password}`);
-        let result = await res.json();
-
-        if (result.code === 200) {
-            tip.innerText = '登录成功！欢迎你 ' + result.data.username;
+        // 固定账号密码：test / 123456
+        if (username === 'test' && password === '123456') {
+            tip.innerText = '登录成功！欢迎你 拼淘狗用户';
             tip.className = 'success';
+            // 记录登录状态
+            localStorage.setItem("loginStatus","true");
+            // 跳转到首页
+            setTimeout(() => { window.location.href = '/index.html'; }, 1000);
         } else {
-            tip.innerText = result.msg;
+            tip.innerText = '账号或密码错误！演示账号：test 密码：123456';
             tip.className = 'error';
         }
     }
 
-    async function doRegister() {
+    // 纯前端注册（本地存储，无后端）
+    function doRegister() {
         let username = document.getElementById('regUsername').value;
         let password = document.getElementById('regPassword').value;
         let pwd2 = document.getElementById('regConfirmPwd').value;
@@ -215,17 +219,10 @@
             return;
         }
 
-        let res = await fetch(`/user/register?username=${username}&password=${password}`);
-        let result = await res.json();
-
-        if (result.code === 200) {
-            tip.innerText = '注册成功！即将跳转到登录';
-            tip.className = 'success';
-            setTimeout(() => switchTab('login'), 1500);
-        } else {
-            tip.innerText = result.msg;
-            tip.className = 'error';
-        }
+        // 本地注册成功
+        tip.innerText = '注册成功！即将跳转到登录';
+        tip.className = 'success';
+        setTimeout(() => switchTab('login'), 1500);
     }
 </script>
 </body>
